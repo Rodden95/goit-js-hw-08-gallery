@@ -71,12 +71,17 @@ const refs= {
   lightboxContent: document.querySelector('div.lightbox__content'),
   lightboxImg: document.querySelector('img.lightbox__image'),
   closeButton: document.querySelector('[data-action="close-lightbox"]'),
+  sliderButtonLeft: document.querySelector('.lightbox__button-left'),
+  sliderButtonRight: document.querySelector('.lightbox__button-right')
 }
 
 refs.jsGallery.addEventListener('click', openModalOnClick)
 refs.closeButton.addEventListener('click', closeModalOnClick)
 refs.lightboxOverlay.addEventListener('click', closeModalOnClickOvelay)
-refs.lightbox.addEventListener('keydown', closeModalOnPressEsc)
+// refs.lightbox.addEventListener('keydown', closeModalOnPressEsc)
+refs.sliderButtonLeft.addEventListener('click', prevPhoto)
+refs.sliderButtonRight.addEventListener('click', nextPhoto)
+
 function galleryRender (galleryItems, htmlList){
   let array = [];
     galleryItems.forEach(e => {
@@ -115,3 +120,35 @@ function closeModalOnClickOvelay(e){
 function closeModalOnPressEsc(e){
   console.log(e.target)
 }
+const array = [];
+    galleryItems.forEach(e => {
+        array.push(e.original)
+    })
+
+  function nextPhoto (){
+    
+    let i = 0;
+   for(let e in array){
+    if(refs.lightboxImg.src === array[e])
+      while (i < array.length){
+        refs.lightboxImg.src = `${array[+e + 1]}`;
+        i++;
+      }
+   }
+    
+    
+
+
+}
+
+function prevPhoto (){
+
+    let i = +array.length + 1;
+   for(let e in array){
+    if(refs.lightboxImg.src === array[e])
+      while (i > array.length){
+        refs.lightboxImg.src = `${array[+e - 1]}`;
+        i--;
+      }
+   }
+  }
