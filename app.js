@@ -65,23 +65,24 @@ const galleryItems = [
 ];
 const refs= {
   gallery: document.querySelector('ul.gallery'),
-  jsGallery: document.querySelector('ul.js-gallery'),
+  jsGallery: document.querySelector('li.gallery__item'),
   lightbox: document.querySelector('.js-lightbox'),
   lightboxOverlay: document.querySelector('div.lightbox__overlay'),
   lightboxContent: document.querySelector('div.lightbox__content'),
   lightboxImg: document.querySelector('img.lightbox__image'),
   closeButton: document.querySelector('[data-action="close-lightbox"]'),
   sliderButtonLeft: document.querySelector('.lightbox__button-left'),
-  sliderButtonRight: document.querySelector('.lightbox__button-right')
+  sliderButtonRight: document.querySelector('.lightbox__button-right'),
+  
 }
 
-refs.jsGallery.addEventListener('click', openModalOnClick)
+refs.gallery.addEventListener('click', openModalOnClick)
 refs.closeButton.addEventListener('click', closeModalOnClick)
 refs.lightboxOverlay.addEventListener('click', closeModalOnClickOvelay)
-// refs.lightbox.addEventListener('keydown', closeModalOnPressEsc)
+refs.gallery.addEventListener('keydown', closeModalOnPressEsc)
 refs.sliderButtonLeft.addEventListener('click', prevPhoto)
 refs.sliderButtonRight.addEventListener('click', nextPhoto)
-
+refs.gallery.addEventListener('keydown', nextPhoto)
 function galleryRender (galleryItems, htmlList){
   let array = [];
     galleryItems.forEach(e => {
@@ -102,23 +103,32 @@ function openModalOnClick(e){
     if(refs.lightboxImg.src){
       refs.lightboxImg.src = '';
     }
+    if(e.target.classList != 'gallery__image') return 
     refs.lightboxImg.src = e.target.dataset.source
-    refs.lightbox.classList.toggle('is-open');
+    
+    const currentActiveLight = document.querySelector('div.is-open');
+    if (currentActiveLight) {
+      refs.lightbox.classList.remove('is-open');
+    }
+    refs.lightbox.classList.add('is-open');
+  return currentActiveLight;
+    
     
 }
 function closeModalOnClick(){
 
-  refs.lightbox.classList.toggle('is-open');
+  refs.lightbox.classList.remove('is-open');
   
 }
 function closeModalOnClickOvelay(e){
-  
-  if(e.currentTarget){
-    refs.lightbox.classList.toggle('is-open');
-  }
+    refs.lightbox.classList.remove('is-open');
 }
 function closeModalOnPressEsc(e){
-  console.log(e.target)
+  
+  if(e.key === 'Escape')
+  
+    refs.lightbox.classList.remove('is-open');
+  
 }
 const array = [];
     galleryItems.forEach(e => {
@@ -126,16 +136,16 @@ const array = [];
     })
 
   function nextPhoto (){
-    
-    let i = 0;
-   for(let e in array){
-    if(refs.lightboxImg.src === array[e])
-      while (i < array.length){
-        refs.lightboxImg.src = `${array[+e + 1]}`;
-        i++;
+    for(let e in array){
+      if(refs.lightboxImg.src === array[e]){
+        if(!array[+e + 1]){
+          refs.lightboxImg.src = `${array[0]}`;
+        }else{
+            refs.lightboxImg.src = `${array[+e+1]}`;
+          }
+          return;
       }
-   }
-    
+     }   
     
 
 
@@ -143,12 +153,12 @@ const array = [];
 
 function prevPhoto (){
 
-    let i = +array.length + 1;
    for(let e in array){
     if(refs.lightboxImg.src === array[e])
-      while (i > array.length){
-        refs.lightboxImg.src = `${array[+e - 1]}`;
-        i--;
-      }
+            if(array[+e - 1]){
+              refs.lightboxImg.src = `${array[+e - 1]}`;
+            }else{
+              refs.lightboxImg.src = `${array[array.length - 1]}`;
+            }
    }
   }
